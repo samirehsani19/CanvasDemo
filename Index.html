@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<style>
+  #canvas{
+    padding: 1px;
+    border: 2px solid #ccc;
+    background: rgb(236, 233, 233);
+    box-shadow: 0px 5px 17px -3px black;
+  }
+</style>
+<body>
+  <div id="container" style="width: 100%; height: 100vh;display: flex; justify-content: center; align-items: center;">
+    <canvas id="canvas"></canvas>
+    <h2 id="text"></h2>
+    <h2 id="divposition"></h2>
+  </div>
+
+
+  // Scans 10025161 = 1002516 + 1 => LoadUnitID = 1002516, 1 = Rotation (Front)
+  // loadunit oriantation
+
+<script>
+  var canvas = document.querySelector("#canvas");
+  var container = document.querySelector("#container");
+  var ctx = canvas.getContext('2d');
+  var data = {
+    canvasWidth: 600,
+    canvasHeight: 400,
+    compartments: [
+      { id: 1, startX: 0, startY: 0, sizeX: 300, sizeY: 200, sizeDepth: 200, color: 'orange'},
+      { id: 2, startX: 300, startY: 0, sizeX: 300, sizeY: 200, sizeDepth: 200, color: 'red'},
+      { id: 3, startX: 0, startY: 200, sizeX: 300, sizeY: 200, sizeDepth: 200, color: 'yellow'},
+      { id: 4, startX: 300, startY: 200, sizeX: 300, sizeY: 200, sizeDepth: 200, color: 'yellowgreen'},
+    ]
+  }
+
+  canvas.width = data.canvasWidth;
+  canvas.height = data.canvasHeight;
+  ctx.fillStyle= "#ccc"; // canvas background
+  ctx.lineWidth = 4;
+
+   
+  data.compartments.forEach((e, index) => {
+
+    ctx.fillStyle = e.color;
+    ctx.fillRect(e.startX, e.startY, e.sizeX, e.sizeY);  // set color for each rectangle
+    ctx.font = "50px Arial";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+
+    ctx.fillText(e.id, e.startX + e.sizeX / 2, e.startY + e.sizeY / 2);  // display (Id) in the middle of each rectangle
+    ctx.strokeRect(e.startX, e.startY, e.sizeX, e.sizeY); // draw lines
+    
+  });
+
+  //Handle click event on each rectangle
+  canvas.addEventListener('click', function(event){
+    event.preventDefault();
+    getCursorPosition(event)
+  })
+
+  //Get the clicked position
+function getCursorPosition(event) {
+    const rect = canvas.getBoundingClientRect();  // get the position of a recangle
+    const x = event.clientX - rect.left;  // the clicked spot X position
+    const y = event.clientY - rect.top;  // the clicked spot Y position
+
+    var px = x / rect.width * data.canvasWidth;  // get the mouse clicked position according to canvas width
+    var py = y / rect.height * data.canvasHeight; 
+ 
+    data.compartments.forEach((e, index) => {
+      //find which rectangle is clicked
+      if((px >= e.startX && px <= e.sizeX + e.startX) && (py >= e.startY && py <= e.sizeY + e.startY)){
+        ctx.fillStyle = "cyan";
+        ctx.fillRect(e.startX, e.startY, e.sizeX, e.sizeY); 
+
+        //display text over the color
+        ctx.fillStyle = "black";
+        ctx.fillText(e.id, e.startX + e.sizeX / 2, e.startY + e.sizeY / 2);  // display (Id) in the middle of each rectangle
+        ctx.strokeRect(e.startX, e.startY, e.sizeX, e.sizeY); // draw lines
+      }
+    });
+}
+
+
+
+
+</script>
+</body>
+</html>
